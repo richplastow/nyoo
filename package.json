@@ -1,0 +1,40 @@
+{
+  "name": "nyoo",
+  "version": "0.0.1",
+  "description": "CoffeeScript classes, brittle or supple",
+  "main": "build/nyoo.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "devDependencies": {
+    "apage": "latest",
+    "coffee-script": "latest",
+    "nodemon": "latest"
+  },
+  "scripts": {
+    "build": "node bin/akaybe-build",
+    "hi": "open .; open index.html; open test/run-test.html; subl .",
+    "index": "node_modules/apage/bin/apage -i README.md doc/*.md -o index.html -p \"`cat node_modules/apage/build/plugin/*.js`\"",
+    "test": "node test/run-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richplastow/nyoo.git"
+  },
+  "keywords": [
+    "class",
+    "CoffeeScript",
+    "public",
+    "private",
+    "seal",
+    "freeze",
+    "signature"
+  ],
+  "author": "Rich Plastow <rich@richplastow.com> (http://richplastow.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/richplastow/nyoo/issues"
+  },
+  "homepage": "http://nyoo.richplastow.com/"
+}
