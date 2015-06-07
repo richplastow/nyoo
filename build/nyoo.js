@@ -88,10 +88,47 @@
       if (config == null) {
         config = {};
       }
-      this.xx = 123;
+      this.classes = {};
     }
 
-    Main.prototype.xx = function() {};
+    Main.prototype.add = function(classRef) {
+      var k, member, name, private_signatures, public_signatures, ref, signature, v;
+      if (ªF !== ªtype(classRef)) {
+        throw new Error("`classRef` is type " + (ªtype(classRef)) + ", not function");
+      }
+      if (ªS !== ªtype(classRef.prototype.C)) {
+        throw new Error("`classRef::C` is type " + (ªtype(classRef.prototype.C)) + ", not string");
+      }
+      public_signatures = {};
+      private_signatures = {};
+      ref = classRef.prototype;
+      for (k in ref) {
+        v = ref[k];
+        if ('_public' === k.slice(-7)) {
+          public_signatures[k] = v;
+        } else if ('_private' === k.slice(-8)) {
+          private_signatures[k] = v;
+        }
+      }
+      for (k in public_signatures) {
+        signature = public_signatures[k];
+        name = k.slice(0, -7);
+        member = classRef.prototype[name];
+        if (ªF === ªtype(member)) {
+          classRef.prototype[name] = function() {
+            return member();
+          };
+        }
+      }
+      this[classRef.prototype.C] = function() {
+        var inst;
+        inst = new classRef;
+        Object.seal(inst);
+        return inst;
+      };
+      this.classes[classRef.prototype.C] = classRef;
+      return this;
+    };
 
     return Main;
 

@@ -3,7 +3,7 @@
 /*! Nyoo 0.0.1 //// MIT Licence //// http://nyoo/richplastow.com */
 
 (function() {
-  var Main, Tudor, tudor, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid,
+  var Main, Thing, Tudor, Wrong, tudor, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   ªC = 'Nyoo';
@@ -89,10 +89,47 @@
       if (config == null) {
         config = {};
       }
-      this.xx = 123;
+      this.classes = {};
     }
 
-    Main.prototype.xx = function() {};
+    Main.prototype.add = function(classRef) {
+      var k, member, name, private_signatures, public_signatures, ref, signature, v;
+      if (ªF !== ªtype(classRef)) {
+        throw new Error("`classRef` is type " + (ªtype(classRef)) + ", not function");
+      }
+      if (ªS !== ªtype(classRef.prototype.C)) {
+        throw new Error("`classRef::C` is type " + (ªtype(classRef.prototype.C)) + ", not string");
+      }
+      public_signatures = {};
+      private_signatures = {};
+      ref = classRef.prototype;
+      for (k in ref) {
+        v = ref[k];
+        if ('_public' === k.slice(-7)) {
+          public_signatures[k] = v;
+        } else if ('_private' === k.slice(-8)) {
+          private_signatures[k] = v;
+        }
+      }
+      for (k in public_signatures) {
+        signature = public_signatures[k];
+        name = k.slice(0, -7);
+        member = classRef.prototype[name];
+        if (ªF === ªtype(member)) {
+          classRef.prototype[name] = function() {
+            return member();
+          };
+        }
+      }
+      this[classRef.prototype.C] = function() {
+        var inst;
+        inst = new classRef;
+        Object.seal(inst);
+        return inst;
+      };
+      this.classes[classRef.prototype.C] = classRef;
+      return this;
+    };
 
     return Main;
 
@@ -216,7 +253,7 @@
     };
 
     Tudor.prototype["do"] = function() {
-      var actual, art, artFail, artPass, article, e, error, expect, heading, j, job, k, l, len, len1, len2, mock, pge, pgeFail, pgePass, ref, ref1, ref2, result, runner, sec, secFail, secPass, section, summary;
+      var actual, art, artFail, artPass, article, e, error, expect, heading, j, job, l, len, len1, len2, m, mock, pge, pgeFail, pgePass, ref, ref1, ref2, result, runner, sec, secFail, secPass, section, summary;
       pge = [];
       mock = null;
       pgePass = pgeFail = 0;
@@ -226,13 +263,13 @@
         art = [];
         artPass = artFail = 0;
         ref1 = article.sections;
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          section = ref1[k];
+        for (l = 0, len1 = ref1.length; l < len1; l++) {
+          section = ref1[l];
           sec = [];
           secPass = secFail = 0;
           ref2 = section.jobs;
-          for (l = 0, len2 = ref2.length; l < len2; l++) {
-            job = ref2[l];
+          for (m = 0, len2 = ref2.length; m < len2; m++) {
+            job = ref2[m];
             switch (ªtype(job)) {
               case ªF:
                 try {
@@ -427,6 +464,82 @@
   tudor.add([
     "01 Nyoo Constructor Usage", "The class and instance are expected types", tudor.is, "The class is a function", ªF, function() {
       return Main;
+    }
+  ]);
+
+  Wrong = (function() {
+    function Wrong() {}
+
+    Wrong.prototype.C = true;
+
+    return Wrong;
+
+  })();
+
+  Thing = (function() {
+    function Thing() {}
+
+    Thing.prototype.C = 'Thing';
+
+    Thing.prototype.PI = 3.14;
+
+    Thing.prototype.pubInstProp_public = [ªS, 'Property description here. '];
+
+    Thing.prototype.pubInstProp = 'Public Instance Property';
+
+    Thing.prototype.priInstProp_private = [ªS, 'Another property description here. '];
+
+    Thing.prototype.priInstProp = 'Private Instance Property';
+
+    Thing.prototype.pubInstMeth_public = {
+      "return": [ªS, 'Public instance method description here. ']
+    };
+
+    Thing.prototype.pubInstMeth = function() {
+      return 'Public Instance Method';
+    };
+
+    Thing.prototype.priInstMeth_private = {
+      "return": [ªS, 'Private instance method description here. ']
+    };
+
+    Thing.prototype.priInstMeth = function() {
+      return 'Private Instance Method';
+    };
+
+    return Thing;
+
+  })();
+
+  tudor.add([
+    "02 Add Usage", "`add()` works as expected", function() {
+      return new Main;
+    }, tudor.is, "`add()` is a function", ªF, function(nyoo) {
+      return nyoo.add;
+    }, tudor.equal, "`add()` allows chaining", true, function(nyoo) {
+      return (nyoo.add(Thing)) === nyoo;
+    }, tudor["throw"], "`add()` must be passed a function", '`classRef` is type number, not function', function(nyoo) {
+      return nyoo.add(123);
+    }, "`add()` must be passed a function with a `C` property", '`classRef::C` is type boolean, not string', function(nyoo) {
+      return nyoo.add(Wrong);
+    }, "`nyoo.Thing` is a modified class constructor", tudor.is, "`nyoo.Thing` is now a function", ªF, function(nyoo) {
+      return nyoo.Thing;
+    }, function(nyoo) {
+      return nyoo.Thing();
+    }, "`nyoo.Thing()` returns an object", ªO, function(thing) {
+      return thing;
+    }, tudor.equal, "`thing.C` is the class name", 'Thing', function(thing) {
+      return thing.C;
+    }, "`thing.C` the class is immutable", 'Thing', function(thing) {
+      thing.C = 'whoops!';
+      return thing.C;
+    }, "`nyoo.Thing()` returns an `instanceof` Thing", true, function(thing) {
+      return thing instanceof Thing;
+    }, "`thing` is sealed", ªU, function(thing) {
+      thing.abc = 123;
+      return ªtype(thing.abc);
+    }, "`thing.pubInstMeth()` returns the expected value", 'Public Instance Method', function(thing) {
+      return thing.pubInstMeth();
     }
   ]);
 
