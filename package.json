@@ -1,6 +1,6 @@
 {
   "name": "nyoo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "CoffeeScript classes, brittle or supple",
   "main": "build/nyoo.js",
   "directories": {
